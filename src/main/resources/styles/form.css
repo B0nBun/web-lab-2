@@ -1,0 +1,24 @@
+#main-container .error {
+  color: var(--form-element-invalid-active-border-color);
+}
+
+#x-fieldset {
+  --rows: 5;
+}
+
+#r-fieldset {
+  --rows: 3;
+}
+
+#formtype-wrapper:not([data-formtype="form"])>form,
+#formtype-wrapper:not([data-formtype="canvas"])>#canvas-wrapper {
+  display: none;
+}
+
+canvas {
+  background-color: white;
+}
+
+#canvas-result-table {
+  height: fit-content;
+}
