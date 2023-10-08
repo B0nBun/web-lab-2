@@ -15,10 +15,6 @@
   display: none;
 }
 
-canvas {
-  background-color: white;
-}
-
 #canvas-result-table {
   height: fit-content;
 }

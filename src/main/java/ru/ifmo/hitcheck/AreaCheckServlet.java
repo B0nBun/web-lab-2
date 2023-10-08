@@ -74,12 +74,12 @@ public class AreaCheckServlet extends HttpServlet {
     private static final String RESULTS_SESSION_KEY = "HitcheckResults";
 
     private static Collection<HitcheckResult> getSessionResults(HttpSession session) {
-            @SuppressWarnings("unchecked")
-            var collection = (Collection<HitcheckResult>) session.getAttribute(
-                RESULTS_SESSION_KEY
-            );
-            if (collection == null) return new ArrayList<>();
-            return collection;
+        @SuppressWarnings("unchecked")
+        var collection = (Collection<HitcheckResult>) session.getAttribute(
+            RESULTS_SESSION_KEY
+        );
+        if (collection == null) return new ArrayList<>();
+        return collection;
     }
 
     private static void setSessionResults(

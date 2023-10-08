@@ -91,6 +91,24 @@ const canvasFormElements = {
 const canvasForm = selectElement(selectors.canvas.canvasForm, HTMLFormElement);
 const canvasFetch = createSwitchingFetch();
 
+/** @constant */
+const canvasStyling = {
+    colors: {
+        axis: "#0f92be",
+        shapes: "#0f92be",
+        hit: "#388e3c",
+        miss: "#c62828",
+    },
+    lineWidths: {
+        grid: 1,
+        axis: 2,
+        point: 1,
+    },
+    pointLineDashes: [5, 5],
+    shapesAlpha: 0.7,
+    gridAlpha: 0.1,
+};
+
 canvasFormElements.canvas.addEventListener("click", async (event) => {
     const canvasFormData = new FormData(canvasForm);
     const r = Number(canvasFormData.get("r"));
@@ -173,13 +191,29 @@ function drawCanvasHitcheck(canvas, pointOptions) {
     const height = canvas.height;
     ctx.clearRect(0, 0, width, height);
 
+    // Background grid
+    ctx.globalAlpha = canvasStyling.gridAlpha;
+    ctx.strokeStyle = canvasStyling.colors.axis;
+    ctx.lineWidth = canvasStyling.lineWidths.grid;
+    ctx.beginPath();
+    const gridCells = 6;
+    for (let i = 1; i < gridCells; i++) {
+        ctx.moveTo(0, (width * i) / gridCells);
+        ctx.lineTo(height, (width * i) / gridCells);
+        ctx.moveTo((height * i) / gridCells, 0);
+        ctx.lineTo((height * i) / gridCells, width);
+    }
+    ctx.stroke();
+    ctx.closePath();
+
     const translateX = width * OUTSIDE_WHITESPACE_RATIO;
     const translateY = height * OUTSIDE_WHITESPACE_RATIO;
     const scale = 1 - 2 * OUTSIDE_WHITESPACE_RATIO;
     ctx.translate(translateX, translateY);
     ctx.scale(scale, scale);
 
-    ctx.fillStyle = "#0f92be";
+    ctx.globalAlpha = canvasStyling.shapesAlpha;
+    ctx.fillStyle = canvasStyling.colors.shapes;
 
     // Top-left square
     ctx.fillRect(0, 0, width / 2, height / 2);
@@ -202,8 +236,9 @@ function drawCanvasHitcheck(canvas, pointOptions) {
     // X and Y axis
     ctx.resetTransform();
 
-    ctx.strokeStyle = "#000";
-    ctx.lineWidth = 1;
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = canvasStyling.colors.axis;
+    ctx.lineWidth = canvasStyling.lineWidths.axis;
     ctx.beginPath();
     ctx.moveTo(0, height / 2);
     ctx.lineTo(width, height / 2);
@@ -214,13 +249,34 @@ function drawCanvasHitcheck(canvas, pointOptions) {
 
     if (pointOptions) {
         const { x, y, r, hit } = pointOptions;
-        ctx.translate(width / 2, height / 2);
-        ctx.fillStyle = hit ? "green" : "red";
-        const dotX = ((x / r) * width * (1 - 2 * OUTSIDE_WHITESPACE_RATIO)) / 2;
+        const pointWidth = 10;
+        ctx.fillStyle = hit
+            ? canvasStyling.colors.hit
+            : canvasStyling.colors.miss;
+        ctx.strokeStyle = ctx.fillStyle;
+        ctx.setLineDash(canvasStyling.pointLineDashes);
+        ctx.lineWidth = canvasStyling.lineWidths.point;
+        const dotX =
+            ((x / r) * width * (1 - 2 * OUTSIDE_WHITESPACE_RATIO)) / 2 +
+            width / 2;
         const dotY =
-            ((-y / r) * height * (1 - 2 * OUTSIDE_WHITESPACE_RATIO)) / 2;
-        ctx.fillRect(dotX - 5, dotY - 5, 10, 10);
+            ((-y / r) * height * (1 - 2 * OUTSIDE_WHITESPACE_RATIO)) / 2 +
+            height / 2;
+        ctx.fillRect(
+            dotX - pointWidth / 2,
+            dotY - pointWidth / 2,
+            pointWidth,
+            pointWidth,
+        );
+        ctx.beginPath();
+        ctx.moveTo(dotX, 0);
+        ctx.lineTo(dotX, height);
+        ctx.moveTo(0, dotY);
+        ctx.lineTo(width, dotY);
+        ctx.stroke();
+        ctx.closePath();
     }
 
+    ctx.setLineDash([]);
     ctx.resetTransform();
 }

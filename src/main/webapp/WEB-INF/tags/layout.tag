@@ -1,7 +1,7 @@
 <%@tag description="Page layout template" pageEncoding="UTF-8"%>
 <%@attribute name="headAddons" fragment="true" %>
 <!DOCTYPE html>
-<html lang="en">
+<html data-theme="dark" lang="en">
 
 <head>
   <meta charset="UTF-8">
