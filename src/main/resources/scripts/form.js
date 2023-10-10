@@ -105,7 +105,7 @@ const canvasStyling = {
         point: 1,
     },
     pointLineDashes: [5, 5],
-    shapesAlpha: 0.7,
+    shapesAlpha: 0.6,
     gridAlpha: 0.1,
 };
 
@@ -153,8 +153,15 @@ canvasFormElements.canvas.addEventListener("click", async (event) => {
         });
 
     if (response) {
-        updateCanvasHitcheckView(canvasFormElements, response);
+        updateCanvasHitcheckView(canvasFormElements, response.r, response);
     }
+});
+
+canvasRFieldset.addEventListener("change", (event) => {
+    const input = event.target;
+    if (!(input instanceof HTMLInputElement)) return;
+    const rValue = Number(input.value);
+    updateCanvasHitcheckView(canvasFormElements, rValue);
 });
 
 updateCanvasHitcheckView(canvasFormElements);
@@ -162,13 +169,15 @@ updateCanvasHitcheckView(canvasFormElements);
 /**
  *
  * @param {{ canvas: HTMLCanvasElement; xInput: HTMLInputElement, yInput: HTMLInputElement; hitCheckbox: HTMLInputElement }} canvas
- * @param {{ x: number; y: number; r: number; hit: boolean}=} pointOptions
+ * @param {number=} r
+ * @param {{ x: number; y: number; hit: boolean}=} pointOptions
  */
 function updateCanvasHitcheckView(
     { canvas, xInput, yInput, hitCheckbox },
+    r,
     pointOptions,
 ) {
-    drawCanvasHitcheck(canvas, pointOptions);
+    drawCanvasHitcheck(canvas, r, pointOptions);
     if (!pointOptions) {
         hitCheckbox.indeterminate = true;
         return;
@@ -182,9 +191,10 @@ function updateCanvasHitcheckView(
 
 /**
  * @param {HTMLCanvasElement} canvas
- * @param {{ x: number; y: number; r: number; hit: boolean }=} pointOptions
+ * @param {number=} r
+ * @param {{ x: number; y: number; hit: boolean }=} pointOptions
  */
-function drawCanvasHitcheck(canvas, pointOptions) {
+function drawCanvasHitcheck(canvas, r, pointOptions) {
     const ctx = canvas.getContext("2d");
     if (ctx == null) return;
     const width = canvas.width;
@@ -225,6 +235,13 @@ function drawCanvasHitcheck(canvas, pointOptions) {
     ctx.closePath();
     ctx.fill();
 
+    // R value label
+    ctx.globalAlpha = 1;
+    const fontSize = (height / 15) * scale;
+    ctx.font = `${fontSize}px sans-serif`;
+    ctx.fillText(r ? String(r) : "R", width, fontSize + height / 2);
+    ctx.globalAlpha = canvasStyling.shapesAlpha;
+
     // Bottom-right triangle
     ctx.beginPath();
     ctx.moveTo(width / 2, height / 2);
@@ -247,8 +264,8 @@ function drawCanvasHitcheck(canvas, pointOptions) {
     ctx.stroke();
     ctx.closePath();
 
-    if (pointOptions) {
-        const { x, y, r, hit } = pointOptions;
+    if (pointOptions && r) {
+        const { x, y, hit } = pointOptions;
         const pointWidth = 10;
         ctx.fillStyle = hit
             ? canvasStyling.colors.hit
