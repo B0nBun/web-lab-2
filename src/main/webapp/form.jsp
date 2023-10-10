@@ -1,23 +1,6 @@
 <%@page import="ru.ifmo.hitcheck.utils.HitcheckInput" contentType="text/html;charset=UTF-8" language="java" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
-
-<template id="template-x-radio-buttons">
-  <% for (Float value : HitcheckInput.valuesX) { %>
-    <label for="x-radio-<%= value %>">
-      <input type="radio" id="x-radio-<%= value %>" name="x" value="<%= value %>" />
-      <%= value %>
-    </label>
-  <% } %>
-</template>
-
-<template id="template-r-radio-buttons">
-  <% for (Float value : HitcheckInput.valuesR) { %>
-    <label for="r-radio-<%= value %>">
-      <input type="radio" id="r-radio-<%= value %>" name="r" value="<%= value %>" />
-      <%= value %>
-    </label>
-  <% } %>
-</template>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%
   String viewType = request.getParameter("view");
@@ -38,7 +21,12 @@
       <form id="form" method="POST" action="/">
         <fieldset id="x-fieldset">
           <legend><strong>X</strong></legend>
-          <span data-use-template="template-x-radio-buttons"></span>
+          <c:forEach var="value" items="${HitcheckInput.valuesX}">
+            <label for="x-radio-${value}">
+              <input type="radio" id="x-radio-${value}" name="x" value="${value}" />
+              ${value}
+            </label>
+          </c:forEach>
           <small class="error" id="x-error"></small>
         </fieldset>
   
@@ -57,7 +45,12 @@
   
         <fieldset id="r-fieldset">
           <legend><strong>R</strong></legend>
-          <span data-use-template="template-r-radio-buttons"></span>
+          <c:forEach var="value" items="${HitcheckInput.valuesR}">
+            <label for="r-radio-${value}">
+              <input type="radio" id="r-radio-${value}" name="r" value="${value}" />
+              ${value}
+            </label>
+          </c:forEach>
           <small class="error" id="r-error"></small>
         </fieldset>
   
@@ -95,7 +88,12 @@
 
           <fieldset id="canvas-r-fieldset">
             <legend><strong>R</strong></legend>
-            <span data-use-template="template-r-radio-buttons"></span>
+              <c:forEach var="value" items="${HitcheckInput.valuesR}">
+                <label for="r-radio-${value}">
+                  <input type="radio" id="r-radio-${value}" name="r" value="${value}" />
+                  ${value}
+                </label>
+              </c:forEach>
             <small class="error" id="canvas-r-error"></small>
           </fieldset>
 
