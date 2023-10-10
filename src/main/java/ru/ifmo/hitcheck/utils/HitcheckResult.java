@@ -12,9 +12,9 @@ public record HitcheckResult(Float x, Float y, Float r, boolean hit, Instant tim
     public JsonObject toJson() {
         return Json
             .createObjectBuilder()
-            .add("x", this.x())
-            .add("y", this.y())
-            .add("r", this.r())
+            .add("x", Json.createValue(this.x()))
+            .add("y", Json.createValue(this.y()))
+            .add("r", Json.createValue(this.r()))
             .add("hit", this.hit())
             .add("timestamp", this.timestamp().getEpochSecond())
             .build();

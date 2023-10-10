@@ -130,8 +130,9 @@ canvasFormElements.canvas.addEventListener("click", async (event) => {
     const y = ratioYRelativeToR * r;
 
     const formData = new FormData();
-    formData.append("x", String(x));
-    formData.append("y", String(y));
+    formData.append("x", x.toFixed(2));
+    formData.append("y", y.toFixed(2));
+    console.debug(formData.get("x"), formData.get("y"));
     formData.append("r", String(r));
     formData.append("response-type", "api");
 
